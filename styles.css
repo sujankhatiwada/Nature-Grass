@@ -21,6 +21,10 @@ body {
   background: #1a3d2e;
 }
 
+ul {
+  list-style: none;
+}
+
 #grass-canvas {
   display: block;
   width: 100%;
