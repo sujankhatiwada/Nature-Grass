@@ -4,6 +4,19 @@
   const canvas = document.getElementById("grass-canvas");
   const ctx = canvas.getContext("2d");
   const hint = document.querySelector(".hint");
+  const hintClose = document.querySelector(".hint-close");
+
+  function hideHint() {
+    if (hint) hint.classList.add("hidden");
+  }
+
+  if (hintClose) {
+    hintClose.addEventListener("click", (e) => {
+      e.stopPropagation();
+      hideHint();
+    });
+    hintClose.addEventListener("pointerdown", (e) => e.stopPropagation());
+  }
 
   let width = 0;
   let height = 0;
@@ -202,9 +215,7 @@
     pointer.active = active;
     pointer.targetStrength = active ? 1 : 0;
 
-    if (active && hint) {
-      hint.classList.add("hidden");
-    }
+    if (active) hideHint();
   }
 
   function onPointerDown(e) {
