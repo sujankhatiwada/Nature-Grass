@@ -4,6 +4,54 @@
   const canvas = document.getElementById("grass-canvas");
   const ctx = canvas.getContext("2d");
   const hint = document.querySelector(".hint");
+  const hintClose = document.querySelector(".hint-close");
+
+  const HINT_VISIBLE_MS = 3200;
+  let hintDismissed = false;
+  let hintFinalized = false;
+  let hintAutoTimer = null;
+
+  function finalizeHintDismiss() {
+    if (!hint || hintFinalized) return;
+    hintFinalized = true;
+    hint.classList.add("hidden");
+    hint.classList.remove("dismissing");
+  }
+
+  function dismissHint() {
+    if (!hint || hintDismissed) return;
+    hintDismissed = true;
+    if (hintAutoTimer) {
+      clearTimeout(hintAutoTimer);
+      hintAutoTimer = null;
+    }
+
+    hint.classList.add("dismissing");
+
+    const onDone = (e) => {
+      if (e.target !== hint || e.propertyName !== "transform") return;
+      clearTimeout(fallbackTimer);
+      hint.removeEventListener("transitionend", onDone);
+      finalizeHintDismiss();
+    };
+    hint.addEventListener("transitionend", onDone);
+    const fallbackTimer = window.setTimeout(() => {
+      hint.removeEventListener("transitionend", onDone);
+      finalizeHintDismiss();
+    }, 700);
+  }
+
+  if (hint) {
+    hintAutoTimer = window.setTimeout(dismissHint, HINT_VISIBLE_MS);
+  }
+
+  if (hintClose) {
+    hintClose.addEventListener("click", (e) => {
+      e.stopPropagation();
+      dismissHint();
+    });
+    hintClose.addEventListener("pointerdown", (e) => e.stopPropagation());
+  }
 
   let width = 0;
   let height = 0;
@@ -202,9 +250,7 @@
     pointer.active = active;
     pointer.targetStrength = active ? 1 : 0;
 
-    if (active && hint) {
-      hint.classList.add("hidden");
-    }
+    if (active) dismissHint();
   }
 
   function onPointerDown(e) {

@@ -8,7 +8,12 @@
 </head>
 <body>
   <canvas id="grass-canvas" aria-label="Interactive animated grass field"></canvas>
-  <div class="hint">Tap or drag to bend the grass</div>
+  <div class="hint" role="status" aria-live="polite">
+    <button type="button" class="hint-close" aria-label="Close notification">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <p class="hint-text">Tap or drag to bend the grass</p>
+  </div>
   <script src="grass.js"></script>
 </body>
 </html>
